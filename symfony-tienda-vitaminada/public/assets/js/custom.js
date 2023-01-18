@@ -104,4 +104,21 @@ $(document).ready(function(){
 			$(this).parents(".single-cart-list").fadeOut();
 		});
 
+	// AFEGITS X MI (JOSEP)
+	// Posar numeret al carro
+	$.get('/cart/quantity', function(data) {
+		$(".badge-cart").text(data);
+	});
+
+	// Afegir al carro
+	$(".bton-cart").click(function(evento) {
+		evento.preventDefault();
+		var id = $(this).attr('data-id');
+		var ruta = `/cart/add/${id}`;
+		$.get(ruta, function(data) {
+			$(".badge-cart").text(data);
+		})
+	});
+		
+	// Mostrar carro
 });
