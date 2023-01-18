@@ -53,9 +53,36 @@ class CartController extends AbstractController
 
     }
 
+    #[Route('/remove/{id}', name: 'cart_remove', methods: ['GET', 'POST'], requirements: ['id' => '\d+'])]
+    public function cart_remove(int $id): JsonResponse
+    {
+        $this->cart->remove($id);
+        $data = array_sum($this->cart->getCart());
+        return new JsonResponse($data, Response::HTTP_OK);
+    }
+
     #[Route('/quantity', name:'cart_quantity', methods:['GET'])]
     public function cart_quantity(): JsonResponse
     {
         return new JsonResponse(array_sum($this->cart->getCart()), Response::HTTP_OK);
+    }
+
+    #[Route('/products', name:'cart_products', methods:['GET'])]
+    public function cart_products(): JsonResponse
+    {
+        $cart = $this->cart->getCart();
+        $data = [];
+        while ($quantity = current($cart)) {
+            $producto = $this->repository->find(key($cart));
+            $data[$producto->getId()] = [
+                "nombre" => $producto->getNombre(),
+                "price" => $producto->getPrice(),
+                "photo" => $producto->getPhoto(),
+                "quantity" => $quantity,
+                "totalPrice" => $quantity * $producto->getPrice()
+            ];
+            next($cart);
+        }
+        return new JsonResponse($data, Response::HTTP_OK);
     }
 }
