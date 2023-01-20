@@ -30,6 +30,8 @@ class CartService{
     public function remove(int $id){
         //https://symfony.com/doc/current/session.html
         // MHE QUEDAT ACÍ -> UNSET
-        $this->getSession()->unset(self::KEY, $cart);
+        $cart = $this->getCart();
+        unset($cart[$id]);
+        $this->getSession()->set(self::KEY, $cart);
     }
 }

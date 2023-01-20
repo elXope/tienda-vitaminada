@@ -100,9 +100,9 @@ $(document).ready(function(){
 
 
 	// 4. cart-close
-		$(".cart-close").click(function(){
-			$(this).parents(".single-cart-list").fadeOut();
-		});
+		// $(".cart-close").click(function(){
+		// 	$(this).parents(".single-cart-list").fadeOut();
+		// });
 
 	// AFEGITS X MI (JOSEP)
 	// Posar numeret al carro
@@ -117,7 +117,7 @@ $(document).ready(function(){
 			var totalPrice = 0;
 			$.each(data, function(id, producto) {
 				$('.cart-list').append(
-					'<li class="single-cart-list">' +
+					'<li class="single-cart-list" data-id="' + id + '" data-price="' + producto.totalPrice + '">' +
 						'<a href="#" class="photo"><img src="assets/images/collection/' + producto.photo + '" class="cart-thumb" alt="image" /></a>' +
 						'<div class="cart-list-txt">' +
 							'<h6><a href="#">' + producto.nombre + '</a></h6>' +
@@ -130,9 +130,21 @@ $(document).ready(function(){
 				);
 				totalPrice += producto.totalPrice;
 			})
+			$(".cart-close").click(function(){
+				$(this).parents(".single-cart-list").fadeOut(function() {
+					var id = $(this).attr("data-id");
+					var ruta = `/cart/remove/${id}`;
+					$.getJSON(ruta, function(data) {
+						$(".badge-cart").text(data);
+					});
+					var newTotal = parseFloat($('#totalPrice').text());
+					newTotal -= $(this).attr("data-price");
+					$('#totalPrice').text(newTotal);
+				});
+			});
 			$('.cart-list').append(
 				'<li class="total">' +
-					'<span>Total: $' + totalPrice + '</span>' +
+					'<span>Total: $<span id="totalPrice">' + totalPrice + '</span></span>' +
 					'<button class="btn-cart pull-right" onclick="window.location.href=""">Checkout</button>' +
 				'</li>'
 			);
